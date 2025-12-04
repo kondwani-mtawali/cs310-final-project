@@ -1,0 +1,11 @@
+# Documentation: /docs/smoke.md
+
+- name: Smoke Tests
+  hosts: localhost
+  tasks:
+    - name: Ping my host
+      ansible.builtin.ping:
+
+    - name: Print Hello World
+      ansible.builtin.debug:
+        msg: Hello World
