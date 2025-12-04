@@ -2,6 +2,7 @@
 
 - name: Installing Fun Programs
   hosts: localhost
+  become: true
   tasks:
     - name: Install SL
       package: name=sl state=present
