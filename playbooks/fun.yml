@@ -1,0 +1,7 @@
+# /docs/fun.md
+
+- name: Installing Fun Programs
+  hosts: localhost
+  tasks:
+    - name: Install SL
+      package: name=sl state=present
