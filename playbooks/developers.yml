@@ -1,0 +1,43 @@
+- name: Developer SSH Access
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Developer 1 Account Setup
+      user:
+        name: developer1
+        shell: /bin/bash
+        create_home: yes
+        state: present
+
+    - name: Developer 2 Account Setup
+      user:
+        name: developer2
+        shell: /bin/bash
+        create_home: yes
+        state: present
+    
+    - name: Create Developer 1 SSH Directory
+      file:
+        path: /home/developer1/.ssh
+        state: directory 
+        owner: developer1
+        group: developer1
+        mode: "0700"
+
+    - name: Create Developer 2 SSH Directory
+      file:
+        path: /home/developer2/.ssh
+        state: directory
+        owner: developer2
+        group: developer2
+        mode: "0700"
+
+    - name: Add SSH Key Developer 1
+      authorized_key:
+        user: developer1
+        key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC8TPeljs5H4la9PSCo7yWLIiTcSCA4QUpu2xhDjpkzf/nDh+cJF7n0tgJfu5CyqRs2scN5VqEMIHSrdQfriCqPfOqVTlcFCD+UjrWsR/3blgurnDiVxCAPkbEcQRLhFH+o+bvOvbN5RTpPCXTWP/w5uDjGvbblciFQk3EZGZC3KSgZQDE/yzsJTsvHwauypk3dSn/JlPlT5fStN/kwsK+yppoQvAkQ3PvX3orZ/OLB2tOUvY27F57owjKGhIiigDZ4HmokGbQ/NJM0mwcTdCyKP8tQ/f4EXlhC7biPR/1NFML9XTeFpzOThYV6OeafNw1dVnpJEsGHyv44fgNF2vFbSwl/NEqfkjU9GR959m0Rbt/KEwptEKlHCHzKbdy4p0JkRhCGvnNtT/q5x/O+Tc6DDdH0Q5DrxhpPbGLqjQwDoRybBWkiWbia5+s5h1iGAiz7PeD3TqzLrK+SO6uOxfD242YpENDqn1D+R98obuI7D2/iLwEVSdV4O3Fu3p4Ex44875t5F174gNQEpVkkm4E7DVOk/bhS3yBMqCxhdu0pa8MV0e0MPUOPNoqTOZoEKiyTuNIoWSENlJiqX4AROkyWXn9rp8cuhbfXsdmGKhtyF8vtApJaJC+TIkRltxl1PzZzRFfI3NA/4eXosa3bZ6N3AGvKF5OeWlQjaXJs7W//0Q== developer1@host"
+
+    - name: Add SSH Key Developer 2
+      authorized_key:
+        user: developer2
+        key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDJCcKikQphA0P4NjBrfWtlRKIIjnPf+6spGbywnVrmjJc5LwK2FFkcSdtvWV9pHOIOimpWhwGepaD5tNLqyL9D7cIiWcVIKWAkSIklsMTE770KZ55gTKfj1gxsGJ06hs0f+EitfDf7Egvs8XvJHjFNuBUyUKU/qhXPZOW1uJGF0+BvvEosq1K8OOFsBOijUBO2bn07vVGd2FdwtPixwILk9h2jwby2U7HtbmwJ46JpOAQqx+BPR3rWzwKGY2eD/6R50rbH7AI1hVqbJfvDy1ox/MIdkO8jnM/alLx7HwacaXEf02gMLou0tGyyGdGiqQZjq2GXKls2uB0K0f43YGDaB6BoJBCv1ipj88jzoaog7Zf0VcozwdB5KPpPwY2x0o5p6jek6bhGvbLLiBVF4dj7xnyp+GlDcdoJ7hRTTETDaGiWZjIb26jWpkfiKS/VwGQ/uj4rmyvEUIft/WCdAJwBkLrhMUhyowXXMWwrWM2YXc1MlreVZvosdPyBfWZ1aPKYmsqzbX88pQIvo/P5nnegmkVOCLgxoDipFrN1W8pEhfTSvmAUl8SdiW7xZghdlDzAbjxfAxuAJLsPs0ZvzkRoI6kOoYRKHmLgpchlPwu8qZumJURp/djDplICnH94Sh4Uol3WQGnchfjixkbNEeELTIe8l33JD4MXNQecrIis8w== developer2@host"

@@ -1,0 +1,33 @@
+- name: Create Admin Account
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Create Admin user
+      user: 
+        name: admin
+        groups: sudo
+        shell: /bin/bash
+        create_home: yes
+        state: present
+    
+    - name: Create Admin SSH Directory
+      file:
+        path: /home/admin/.ssh
+        state: directory
+        owner: admin
+        group: admin
+        mode: "0700"
+
+    - name: Add Admin SSH Key
+      authorized_key: 
+        user: admin
+        key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCYHgaJrjUMP1yyVA/gcVKVK/2mZKZI88xpuSjAgW6hE494HVqUWy/Wuiqk8anuSgBPMeF+5r8X4cFVfKuGIyrXuFOukQ2PEVFkOm43ova0CL3XKUqWKOEjeCbCg/jbdotUFG8YeQgtgzvIY/Zry8Z3EeKmbSm5v/HC88CYk2BiyFMvJJonuqJUSrE/03AUZ3AzSSM1jnlrehPoNgdQ5DVq9rdU7UbZj8mOL4/EyrtzKSxlCVr8z2qhlAx07ER5vRdfLLcVTPmwCcujkw5XedKGkVHMXqYMgkchchq8U2fhTTkYvkyizGm3D+6m8HfQriy9rk4Pp4H73vWIAduxx8coCae9GsClE4aVCT5W2R2WVhcrEDaWoB5FIIx/pnsvPvhGauX9c2S7Qs02kEgZ9LDuUe78/sfiBxGycMVcGiQeVXdR5wiEW93JPPOzA+l9g96cQBSVgTptyX9BYCyTR1g8tEQP07NK4Wop+NB7Y9QSvDJ3oXIe6cT1KtsMQWK4tEZT5cOD/8JkGCXSxLfees2aelppprQXUn8uWJW8J1v7TnuvlSRbuaJuAlFqxr9U3DdOTsfYaUBHz8r6dBnClDZXHmCH/hxuao0mdn7VnydgbzpwsQqinO+Neuibk/VmvxfSiqwuEx4xOTPCrXTVc5AA88pTZqaCuTk5jb/e/OHlOw== admin@host"
+        state: present
+
+    - name: Passwordless Admin Authentication
+      copy:
+        dest: /etc/sudoers.d/admin
+        content: "admin ALL(ALL) NOPASSWD:ALL"
+        mode: "0440"
+        
+

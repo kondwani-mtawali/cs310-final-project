@@ -1,0 +1,67 @@
+report_kondwani_mtawali.txt
+
+My responsibilities for the project included writing the playbook for the 2 developers to access their sites,
+configuring their SSH settings and setting up a single admin account.
+
+Developers.yml:
+- The developer.yml playbook runs on the current machine, allowing privelege escalation to sudo, and completes three tasks for 
+ each developer.
+- For each user account created for a developer, the playbook task specifies the Ansible module which is the "User" module in
+ this case. The taks for user creation specify the username, sets the user's login shell, creates the home directory for the
+ user if it doesn't exist, and ensures that the user does in fact exist. 
+- For each developer, an SSH directory is configured. The ansible module for this task is "file", instructing Ansible that
+ filesystem objects are being managed. Each task per user specifies where the file exists, that type of path we're looking for
+ which user owns the file--which is the respective developer--, the user that owns the group of the directory--again, the 
+ repsective developer--, and the mode which specifies what file permissions are set for the developer.
+- In addition to setting up the SSH directory, a third task is included in the playbook for each developer that assigns them
+ an SSH key. The module for this task is "authorized_key" which allows for a public key to be assigned to a given user. In our 
+ case, we specify the developer as the user and assign them a public SSH key which I personally generated on my machine. 
+
+admins.yml:
+- The admins.yml playbook has a very similar structure to the developers.yml playbook apart from a subtle different in assigning
+ the SSH keys and an additional task. It's run on the local machine, it's granted escalation priveleges and it includes 4 tasks.
+- The first task ensures the existence of the admin user account, with the Ansible module being used, specifying the name as admin,
+ the group as admin, sets the login shell, ensures the existence of the admin's home directory, and ensures the existence of the user.
+- The SSH directory is another task which utilizes the file module, specifying the directory where the file exists, the type of path 
+ expected, the admin specified as the owner of the directory and the group, and the permissions set for the file.
+- The admin user also needs an SSH key which I generated on my personal machine. The only difference in the case of the admin user
+ is that the state parameter is specfied as present to ensure the existnce of the public key as admin access is high risk and clarity
+ is more important for admins than it is for developers.
+- The last task for the admin user is setting up passwordless authentication. It utilizes the copy ansible module which ensures 
+ consistency in configuration and file distributions in the transferring of files from Ansible to the hosts being managed. Typically,
+ this file transfer takes place from Ansible to remote hosts, but in our case we're just working with the localhost. The parameters 
+ include dest which tells Ansible where to put the file in the system, in our case, the recommended directory is entered. The content
+ parameter allows the admin to run any command as any user anywhere without a password. The mode parameter again is responsible for
+ setting the permissions on the directory.
+
+--Hurdles/Misconceptiosn--
+1. The first thing hurdle I encountered was the syntax of YAML. It was sensitive to spaces and indentation which I spent a 
+considerable amount of time trying to fix. Fortunately, running cmd: "ansible-playbook playbooks/developers.yml --check" allowed
+me to check whether or not my playbook still included syntax errors. 
+
+2. One thing that I also struggled with was figuring out how I should actually structure my tasks. The example shown in class was 
+informative but didn't give a clear picture of how to create a user account, or even figure out how to configure SSH for those accounts
+Ansible's official documentation was informative on what available modules are available and how to structure tasks that utilize those 
+modules.
+
+3. My biggest confusion for the admin.yml playbook was understanding how to configure the playbook to set up passwordless authentication.
+I initally looked up examples to give me some form of direction and eventually the copy module came to my attention from a youtube video 
+from Learn Linux TV where he gives a run down of how to add users in an Ansible playbook.I looked at the documentation for the copy module 
+and prompted AI on the best practices for the entries on the parameters, specifically on the content parameter.
+Video: https://www.youtube.com/watch?v=P5iKWANifrU
+
+--What Could've Been Done Differently--
+1. After looking through ansible's documentation more, I discovered vars which separated tasks and from the data, or
+ task configurations. If I wrote my playbook utilizing vars my playbook could've been a lot cleaner and I wouldn't have had
+ to hard code every single one of my task values. I believe it would've also made it easier to make the playbook more scalable for 
+ defining more users by utilizing a loop like structure.
+
+2. I decided to write my admins.yml playbook in the same format as the developers.yml playbook, my rational was I've written a
+playbook to create users(developers.yml) and I just need to make another user(admins). But things got tricky when I got to setting
+permissions of the admin user and I spent a lot of time trying to figure out how to code the permissions. It turns out Ansible has 
+a sudoers module, if I attempted to just use that perhaps it would've saved me some time, but I stuck with my initial approach.
+
+--Extra Credit: Project Improvements--
+- If I could say something to improve the project, I would recommend implementing the server's as the host as opposed to just the 
+local machine. I was interested in what it would look like to go through the process of running the playbooks on the server and how 
+all of that would've worked.
