@@ -1,0 +1,30 @@
+- name: Deploy Bagisto E-Commerce Site
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+          - git
+        state: present
+        update_cache: true
+
+    - name: Enable and start Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Clone Bagisto Docker repository
+      git:
+        repo: https://github.com/bagisto/bagisto-docker.git
+        dest: /opt/bagisto
+        update: yes
+
+    - name: Start Bagisto containers
+      command: docker-compose up -d
+      args:
+        chdir: /opt/bagisto
